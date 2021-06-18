@@ -1,0 +1,155 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>{% block title %}BoEC shop{% endblock %}</title>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/jquery/custom.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <!-- Custom styles for this template -->
+  <link href="{% static 'css/shop-homepage.css' %}" rel="stylesheet">
+</head>
+<body>
+  <!-- Messenger Chat plugin Code -->
+    <div id="fb-root"></div>
+
+    <!-- Your Chat plugin code -->
+    <div id="fb-customer-chat" class="fb-customerchat">
+    </div>
+
+    <script>
+      var chatbox = document.getElementById('fb-customer-chat');
+      chatbox.setAttribute("page_id", "101098602188314");
+      chatbox.setAttribute("attribution", "page_inbox");
+      window.fbAsyncInit = function() {
+        FB.init({
+          xfbml            : true,
+          version          : 'v10.0'
+        });
+      };
+
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = 'https://connect.facebook.net/vi_VN/sdk/xfbml.customerchat.js';
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-default navbar-fixed-top">
+
+    <div class="container">
+      <a href="/" style="text-decoration: none; color: black;"> 
+        <img src='{% static "img/logo.png" %}' height="30px"> BoEC Shop 
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+
+        <ul class="navbar-nav navbar-right">
+
+          {% if user.is_authenticated %}
+
+          <li class="dropdown ">
+            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              <span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{ user.email }}
+            </a>
+
+            <ul class="dropdown-menu">
+              <li>
+                <a href="{% url 'accounts:detail_profile' %}" >
+                  <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Thông tin cá nhân
+                </a>
+              </li>
+              {% if user.is_staff %}
+              <li>
+                <a href="{% url 'admin:index' %}" >
+                  <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Trang quản lý
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'orders:check_order' %}">
+                  <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Kiểm tra đơn hàng
+                </a>
+              </li>
+              {% else %}
+              <li>
+                <a href="{% url 'cart:cart_detail' %}">
+                  <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Giỏ hàng
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'wishlist:wishlist_detail' %}">
+                  <span class="glyphicon glyphicon-heart" aria-hidden="true"></span> Yêu thích
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'orders:order_list' %}">
+                  <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Theo dõi đơn hàng
+                </a>
+              </li>
+              {% endif %}
+
+              <li role="separator" class="divider"></li>
+
+              <li>
+                <a href="{% url 'accounts:logout' %}?next=/">
+                  <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Đăng xuất
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          {% else %}
+          <li class="nav-item">
+            <a href="{% url 'accounts:signup' %}" class="nav-link">
+              <span aria-hidden="true"></span>&nbsp; Đăng kí
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="{% url 'accounts:login' %}" class="nav-link">
+              <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp; Đăng nhập
+            </a>
+          </li>
+
+          {% endif %}
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+  &nbsp;
+  <!-- Page Content -->
+  <div class="container">
+    <div id="content">
+      {% block content %}
+      {% endblock %}
+    </div>
+  </div>
+  <!-- /.container -->
+  &nbsp;
+
+</body>
+</html>

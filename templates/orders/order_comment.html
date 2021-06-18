@@ -1,0 +1,117 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block title %}
+Chi tiết đơn hàng
+{% endblock %}
+
+{% block content %}
+
+&nbsp;
+
+{% if order.state == '3' %}
+
+<style>
+	.rate {
+	    float: left;
+	    height: 46px;
+	}
+	.rate:not(:checked) > input {
+	    position:absolute;
+	    top:-9999px;
+	}
+	.rate:not(:checked) > label {
+	    float:right;
+	    width:1em;
+	    overflow:hidden;
+	    white-space:nowrap;
+	    cursor:pointer;
+	    font-size:30px;
+	    color:#ccc;
+	}
+	.rate:not(:checked) > label:before {
+	    content: '★ ';
+	}
+	.rate > input:checked ~ label {
+	    color: #ffc700;    
+	}
+	.rate:not(:checked) > label:hover,
+	.rate:not(:checked) > label:hover ~ label {
+	    color: #deb217;  
+	}
+	.rate > input:checked + label:hover,
+	.rate > input:checked + label:hover ~ label,
+	.rate > input:checked ~ label:hover,
+	.rate > input:checked ~ label:hover ~ label,
+	.rate > label:hover ~ input:checked ~ label {
+	    color: #c59b08;
+	}
+</style>
+
+<h2 style="text-align: center;">Đánh giá sản phẩm</h2>
+&nbsp;&nbsp;
+<table id="cart" class="table table-hover table-condensed">
+	<thead>
+		<tr>
+			<th style="width:40%">Sản phẩm</th>
+			<th style="width:20%">Đánh giá</th>
+			<th style="width:30%">Bình luận</th>
+			<th style="width:10%"></th>
+		</tr>
+	</thead>
+
+	<tbody>
+		{% for item in order.items.all %}
+		{% with product=item.product %}
+		<tr>
+			<td data-th="Product">
+				<div class="row">
+					<div class="col-sm-2 hidden-xs">
+						<a href='{% url "shop:product_detail" product.id product.slug %}'>
+							<img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" class="img-responsive">
+						</a>
+					</div>
+					<div class="col-sm-10">
+						<h4 class="nomargin">{{ product.name }}</h4>
+					</div>
+				</div>
+			</td>
+			{% if not item.isComment %}
+			<form action="{% url 'comment:comment_save' product.id order.id %}" method="post">
+				{% csrf_token %}
+				<td>
+					<div class="rate">
+					    <input type="radio" id="star5" name="rate" value="5" />
+					    <label for="star5" title="text">5 stars</label>
+					    <input type="radio" id="star4" name="rate" value="4" />
+					    <label for="star4" title="text">4 stars</label>
+					    <input type="radio" id="star3" name="rate" value="3" />
+					    <label for="star3" title="text">3 stars</label>
+					    <input type="radio" id="star2" name="rate" value="2" />
+					    <label for="star2" title="text">2 stars</label>
+					    <input type="radio" id="star1" name="rate" value="1" />
+					    <label for="star1" title="text">1 star</label>
+				  </div>
+				</td>
+				<td>
+					<input style="width: 100%; height: 60px;" type="text" name="comment_content">
+				</td>
+				<td>
+					<input type="submit" value="Gửi" style="width: 100%; height: 60px;">
+				</td>
+			</form>
+			{% else %}
+			<td>
+				<h5>Đã đánh giá sản phẩm này!</h5>
+			</td>
+			<td></td>
+			{% endif %}
+		</tr>
+		{% endwith %}
+		{% endfor %}
+	</tbody>
+</table>
+{% endif %}
+
+&nbsp;
+{% endblock %}

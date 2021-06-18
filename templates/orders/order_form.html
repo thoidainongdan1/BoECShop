@@ -1,0 +1,89 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+Đặt hàng
+{% endblock %}
+
+{%block content %}
+<div class="row">
+  <div class="col-md-8">
+    <h4 class="mb-3">Thông tin người mua</h4>
+
+    <form name = "form" action = "{% url 'orders:order_save' %}" method = "POST" class="needs-validation">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="full_name">Họ tên*</label>
+        <input type="text" class="form-control" name="full_name" value="{{ profile.full_name }}" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="phone_number">Số điện thoại*</label>
+        <input type="text" value="{{ profile.phone_number }}" name="phone_number" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="email">Email*</label>
+        <input type="email" class="form-control" value="{{ profile.user.email }}" required disabled>
+      </div>
+
+      <div class="mb-3">
+        <label for="address">Địa chỉ*</label>
+        <input type="text" value="{{ profile.address }}" name="address" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="address_second">Địa chỉ khác <span class="text-muted">(Tuỳ chọn)</span></label>
+        <input name="address_second" type="text" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label for="payment_type">Hình thức thanh toán*</label>
+        <select name="payment_type" class="form-control" style="height: 35px">
+          <option value="0">Thanh toán khi nhận hàng</option>
+          <option value="1">Thanh toán bằng paypal</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="shipment_type">Đơn vị vận chuyển*</label>
+        <select name="shipment_type" class="form-control" style="height: 35px">
+          {% for ship in shipment %}
+          <option value={{ ship.id }}>{{ ship }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <hr class="mb-4">
+      <input class="btn btn-primary btn-lg btn-block" type="submit" value="Tiếp tục">
+    </form>
+  </div>
+
+  <div class="col-md-4">
+    <h4 class="d-flex justify-content-between align-items-center mb-3">
+      <span class="text-muted">Đơn hàng</span>
+      <span class="badge badge-secondary badge-pill">{{cart.items.count}}</span>
+    </h4>
+    <ul class="list-group mb-3">
+      {% for item in cart.items.all %}
+      {% with product=item.product %}
+
+      <li class="list-group-item d-flex justify-content-between lh-condensed">
+        <div>
+          <h6 class="my-0">{{ product.name }}</h6>
+
+        </div>
+        <span class="text-muted">{{ product.price }} X {{ item.quantity }} = {{ item.get_cost }} đ</span>
+      </li>
+
+      {% endwith %}
+      {% endfor %}
+
+      <li class="list-group-item d-flex justify-content-between">
+        <span>Tổng cộng</span>
+        <strong>{{cart.get_total_cost}} đ</strong>
+      </li>
+    </ul>
+
+  </div>
+</div>
+{% endblock %}

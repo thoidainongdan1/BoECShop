@@ -1,0 +1,164 @@
+{% extends "shop/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Thông tin cá nhân{% endblock %}
+
+{%block content %}
+
+<div class="row">
+
+	<div class="col-md-2 col-sm-2">
+		<ul class="nav nav-pills nav-stacked admin-menu" >
+			<li class="active">
+				<a href="" data-target-id="profile">
+					<i class="glyphicon glyphicon-user"></i> Thông tin cá nhân
+				</a>
+			</li>
+
+			<li>
+				<a href="" data-target-id="change-password">
+					<i class="glyphicon glyphicon-lock"></i> Đổi mật khẩu
+				</a>
+			</li>     
+		</ul>
+	</div>
+
+	<div class="col-md-10 col-sm-10 admin-content" id="profile">
+		<div class="panel panel-info" style="margin: 1em;">
+			<div class="panel-heading">
+				<h3 class="panel-title">Họ tên</h3>
+			</div>
+			<div class="panel-body">
+				{{ user.profile.full_name }}
+			</div>
+		</div>
+		<div class="panel panel-info" style="margin: 1em;">
+			<div class="panel-heading">
+				<h3 class="panel-title">Email</h3>
+			</div>
+			<div class="panel-body">
+				{{ user.email }}
+			</div>
+		</div>
+		<div class="panel panel-info" style="margin: 1em;">
+			<div class="panel-heading">
+				<h3 class="panel-title">Giới tính</h3>
+			</div>
+			<div class="panel-body">
+				{% if user.profile.gender == 'M' %}
+				Nam
+				{% endif %}
+				{% if user.profile.gender == 'F' %}
+				Nữ
+				{% endif %}
+			</div>
+		</div>
+		<div class="panel panel-info" style="margin: 1em;">
+			<div class="panel-heading">
+				<h3 class="panel-title">Ngày sinh</h3>
+			</div>
+			<div class="panel-body">
+				{{ user.profile.birth_date }}
+			</div>
+		</div>
+		<div class="panel panel-info" style="margin: 1em;">
+			<div class="panel-heading">
+				<h3 class="panel-title">Số điện thoại</h3>
+			</div>
+			<div class="panel-body">
+				{{ user.profile.phone_number }}
+			</div>
+		</div>
+		<div class="panel panel-info" style="margin: 1em;">
+			<div class="panel-heading">
+				<h3 class="panel-title">Địa chỉ</h3>
+			</div>
+			<div class="panel-body">
+				{{ user.profile.address }}
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-9 col-sm-9 admin-content" id="change-password">
+		<form action="/password" method="post">
+
+			<div class="panel panel-info" style="margin: 1em;">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<label for="old_password" class="control-label panel-title">Mật khẩu cũ</label>
+					</h3>
+				</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<div class="col-sm-10">
+							<input type="password" class="form-control" name="old_password" id="old_password" >
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="panel panel-info" style="margin: 1em;">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<label for="new_password" class="control-label panel-title">Mật khẩu mới</label>
+					</h3>
+				</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<div class="col-sm-10">
+							<input type="password" class="form-control" name="password" id="new_password" >
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="panel panel-info" style="margin: 1em;">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<label for="confirm_password" class="control-label panel-title">Xác nhận mật khẩu</label>
+					</h3>
+				</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<div class="col-sm-10">
+							<input type="password" class="form-control" name="password_confirmation" 
+							id="confirm_password" >
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="panel panel-info border" style="margin: 1em;">
+				<div class="panel-body">
+					<div class="form-group">
+						<div class="pull-left">
+							<input type="submit" class="form-control btn btn-primary" value="Lưu" id="submit">
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</form>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		var navItems = $('.admin-menu li > a');
+		var navListItems = $('.admin-menu li');
+		var allWells = $('.admin-content');
+		var allWellsExceptFirst = $('.admin-content:not(:first)');
+		allWellsExceptFirst.hide();
+		navItems.click(function(e) {
+			e.preventDefault();
+			navListItems.removeClass('active');
+			$(this).closest('li').addClass('active');
+			allWells.hide();
+			var target = $(this).attr('data-target-id');
+			$('#' + target).show();
+		});
+	});
+</script>
+{% endblock %}

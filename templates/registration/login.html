@@ -1,0 +1,21 @@
+{% extends "shop/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Đăng nhập{% endblock %}
+
+{% block content %}
+
+<form method="post">
+	{% csrf_token %}
+
+	{{ form|crispy }}
+
+	<input type="submit" value="Đăng nhập">
+</form>
+
+<br>
+<p><strong>-- Hoặc --</strong></p>
+<a href="{% url 'social:begin' 'facebook' %}" class="btn btn-primary" style="width: 200px">Đăng nhập bằng Facebook</a>
+<br><br>
+<a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-danger" style="width: 200px">Đăng nhập bằng Google</a>
+{% endblock %}

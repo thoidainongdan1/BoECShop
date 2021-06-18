@@ -1,0 +1,113 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block title %}
+{% if category %}{{ category.name }}{% else %}Trang chủ{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-lg-3">
+
+    <h3 class="my-4">Danh mục</h3>
+    <div class="list-group">
+
+      <a href='{% url "shop:product_list" %}' class="list-group-item">Tất cả</a>
+
+      {% for c in categories %}
+      <a href='{% url "shop:product_list_by_category" c.slug %}' class="list-group-item">{{ c.name }}</a>
+      {% endfor %}
+
+    </div>
+
+    <h3 class="my-4">Tìm kiếm sản phẩm</h3>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <form action='{% url "shop:product_search" %}' method="post">
+          {% csrf_token %}
+          <div class="input-group">
+            <input type="text" name="key" class="form-control" placeholder="Tìm kiếm theo tên..." required>
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="submit">Tìm</button>
+            </span>
+          </div><!-- /input-group -->
+        </form>
+      </div><!-- /.col-lg-12 -->
+    </div><!-- /.row -->
+  </div><!-- /.col-lg-3 -->
+  
+  <div class="col-lg-9">
+    <div class="row">
+      <h3 class="my-4">
+        {% if category %}{{ category.name }}
+        {% elif key %}Tìm kiếm sản phẩm có từ khoá: {{ key }}
+        {% else %}Tất cả sản phẩm
+        {% endif %}
+      </h3>
+    </div>
+    <div class="row">
+
+      {% for product in products %}
+      <div class="col-lg-4 col-md-6 mb-4">
+
+        <div class="card h-100">
+          <div class="thumbnail">
+            <a href='{% url "shop:product_detail" product.id product.slug %}'>
+              <img class="card-img-top" src='{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}'>
+            </a>
+          </div>
+          <div class="card-body">
+            <h4 class="card-title">
+              <a href='{% url "shop:product_detail" product.id product.slug %}'>{{ product.name }}</a>
+            </h4>
+            <h5>{{ product.price }} đ</h5>
+            <h5>{{ product.short_description }}</h5>
+          </div>
+          <div class="card-footer text-center">
+            <small class="text-muted">
+              <a href="{% url 'cart:cart_add' product.id %}" class="btn btn-primary">Thêm vào giỏ</a>
+              <a href="{% url 'wishlist:wishlist_add' product.id %}" class="btn btn-default">Yêu thích</a>
+            </small>
+          </div>
+
+        </div>
+      </div>
+      {% endfor %}    
+    </div><!-- /.row -->
+  </div><!-- /.col-lg-9 -->
+</div>
+
+
+<div class="row">
+  <div class="col-md-12 text-center">
+
+    <div class="pag_area">
+      <ul class="pagination">
+        {% if products.has_previous %}
+        <li><a href="?page={{ products.previous_page_number }}">«</a></li>
+        {% else %}
+        <li class="disabled"><span>«</span></li>
+        {% endif %}
+        {% for i in products.paginator.page_range %}
+        {% if products.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+        {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if products.has_next %}
+        <li><a href="?page={{ products.next_page_number }}">»</a></li>
+        {% else %}
+        <li class="disabled"><span>»</span></li>
+        {% endif %}
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- /.row -->
+
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block title %}
+{{ product.name }}
+{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+  .checked {
+    color: orange;
+  }
+</style>
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card mt-4">
+      <div class="card-body">
+        <img src='{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}' class="card-img-top img-fluid">  
+      </div> <!-- /.card -->
+    </div>
+    &nbsp
+    &nbsp
+  </div>
+  <div class="col-lg-4">
+    <div class="card mt-4">
+      <div class="card-body">
+        <h2 class="my-4">
+          <a style=" text-decoration: none;" href="{% url 'shop:product_list_by_category' product.category.slug %}">Liên quan: {{ product.category }}</a>
+        </h2>
+      </div>
+    </div>
+    <div class="card mt-4">
+      <div class="card-body">
+        <h3 class="card-title">{{ product.name }}</h3>
+        <h4>{{ product.price }} đ</h4>
+        <p class="card-text">{{ product.description|linebreaks }}</p>
+        <div class="card-footer text-center">
+          <small class="text-muted form-group " >
+            <a href="{% url 'cart:cart_add' product.id %}" class="btn btn-primary">Thêm vào giỏ</a>
+            <a href="{% url 'wishlist:wishlist_add' product.id %}" class="btn btn-default">Yêu thích</a>
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+&nbsp;
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h2 class="panel-title">Đánh giá chung</h2>
+  </div>
+  <div class="panel-body">
+    <div id="chart"></div>
+  </div>
+  <div class="panel-heading">
+    <h2 class="panel-title">Các bình luận về sản phẩm</h3>
+  </div>
+  {% for comment in comments %}
+  {% with user_comment=comment.user %}
+  <div class="panel-body">
+    <p style="margin-bottom: 5px;">{{ user_comment.profile.full_name }}: {{ comment.content }}</p>
+    <div>
+      {% if comment.star == 1 %}
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star"></span>
+      <span class="fa fa-star"></span>
+      <span class="fa fa-star"></span>
+      <span class="fa fa-star"></span>
+      {% elif comment.star == 2 %}
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star"></span>
+      <span class="fa fa-star"></span>
+      <span class="fa fa-star"></span>
+      {% elif comment.star == 3 %}
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star"></span>
+      <span class="fa fa-star"></span>
+      {% elif comment.star == 4 %}
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star"></span>
+      {% elif comment.star == 5 %}
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star checked"></span>
+      <span class="fa fa-star checked"></span>
+      {% endif %}
+    </div>
+    <small>{{ comment.created }}</small>
+  </div>
+
+  {% endwith %}
+  {% endfor %}
+</div>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script type="text/javascript">
+  // Load google charts
+  google.charts.load('current', {'packages':['bar']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  // Draw the chart and set the chart values
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+          ['Sao', 'Đánh giá'],
+          ['1 sao', 0],
+          ['2 sao', 0],
+          ['3 sao', 0],
+          ['4 sao', 1],
+          ['5 sao', 0]
+        ]);
+
+        var options = {
+          chart: {
+            title: 'Trung bình: '
+          },
+          bars: 'horizontal' 
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('chart'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+  }
+</script>
+
+{% endblock %}
+
+
+
+

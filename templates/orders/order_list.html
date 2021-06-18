@@ -1,0 +1,91 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+Trạng thái đơn hàng
+{% endblock %}
+
+{%block content %}
+&nbsp;
+{% if empty %}
+<h1>Bạn chưa đặt đơn hàng nào</h1>
+{% else %}
+<style>
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+  }
+
+  th, td {
+    text-align: center;
+    padding: 16px;
+  }
+
+  #myTable tr {
+    border-bottom: 1px solid #ddd;
+  }
+
+  #myTable tr.header, #myTable tr:hover {
+    background-color: #ccc;
+  }
+</style>
+
+<table id="myTable">
+  <tr class="header">
+    <th>Ngày đặt đơn</th>
+    <th>Số điện thoại</th>
+    <th>Địa chỉ nhận 1</th>
+    <th>Địa chỉ nhận 2</th>
+    <th>Tổng tiền</th>
+    <th>Hình thức thanh toán</th>
+    <th>Tình trạng thanh toán</th>
+    <th>Trạng thái đơn hàng</th>
+    <th style="width: 5%"></th>
+  </tr>
+
+  {% for order in orders.all %}
+  <tr>
+    <td>{{ order.created }}</td>
+    <td>{{ order.phone_number }}</td>
+    <td>{{ order.user.profile.address }}</td>
+    <td>{{ order.address_second }}</td>
+    <td>{{ order.get_total_cost }} đ</td>
+    <td>{% if order.payment_type == "1" %} Thanh toán bằng paypal {% else %} Thanh toán khi nhận hàng {% endif %}</td>
+    <td>{% if order.paid %} Đã thanh toán {% else %} Chưa thanh toán {% endif %}</td>
+    {% with state=order.state %}
+    {% if state == '0' %}
+    <td>Chờ xác nhận</td>
+    {% elif state == '1' %}
+    <td>Đã xác nhận</td>
+    {% elif state == '2' %}
+    <td>Đang giao hàng</td>
+    {% elif state == '3' %}
+    <td>Giao hàng thành công</td>
+    {% elif state == '4' %}
+    <td>Huỷ</td>
+    {% elif state == '5' %}
+    <td>Giao hàng thất bại</td>
+    {% endif %}
+    {% endwith %}
+    <td>
+      <a class="btn btn-primary" href="{% url 'orders:order_detail' order.id %}">Chi tiết</a>
+    </td>
+    {% if order.state == '0' %}
+    <td>
+      <a class="btn btn-danger" href="{% url 'orders:order_remove' order.id %}" 
+      onclick="return confirm('Bạn có chắc muốn huỷ đơn hàng?');"> Huỷ đơn
+      </a>
+    </td>
+    {% endif %}
+    {% if order.state == '3' %}
+    <td>
+      <a class="btn btn-success" href="{% url 'orders:order_comment' order.id %}"> Đánh giá
+      </a>
+    </td>
+    {% endif %}
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+{% endblock %}

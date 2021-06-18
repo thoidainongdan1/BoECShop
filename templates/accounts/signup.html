@@ -1,0 +1,16 @@
+{% extends "shop/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Đăng kí{% endblock %}
+
+{%block content %} 
+
+<form method="post">
+	{% csrf_token %}
+
+	{{ form|crispy }}
+
+	<input type="submit" value="Đăng kí">
+</form>
+
+{% endblock %}
